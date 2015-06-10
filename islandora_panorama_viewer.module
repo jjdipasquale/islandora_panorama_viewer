@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Defines all the hooks this module implements.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_panorama_viewer_menu() {
+  return array(
+    'admin/islandora/islandora_viewers/panorama_viewer' => array(
+      'title' => 'PanoVR Panorama Viewer',
+      'description' => 'Configure the PanoVR Panorama Viewer.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('islandora_panorama_viewer_admin_settings_form'),
+      'access arguments' => array('administer site configuration'),
+      'file' => 'includes/admin.form.inc',
+      'type' => MENU_NORMAL_ITEM,
+    ),
+    'panorama_viewer_dimensions/%islandora_object' => array(
+      'page callback' => 'islandora_panorama_viewer_dimensions_callback',
+      'page arguments' => array(1),
+      'access callback' => 'islandora_object_access_callback',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'file' => 'includes/callback.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'panorama_viewer_text/%islandora_object' => array(
+      'page callback' => 'islandora_panorama_viewer_text_callback',
+      'page arguments' => array(1),
+      'access callback' => 'islandora_object_access_callback',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 1),
+      'file' => 'includes/callback.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'panorama_viewer_search/%' => array(
+      'page callback' => 'islandora_panorama_viewer_search_callback',
+      'page arguments' => array(1, 2),
+      'access callback' => 'user_access',
+      'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+      'file' => 'includes/callback.inc',
+      'type' => MENU_CALLBACK,
+    ),
+    'panorama_viewer_xml/%islandora_object' => array(
+	'page callback' => 'islandora_panorama_viewer_xml_callback',
+	'page arguments' => array(1),
+	'access callback' => 'user_access',
+	'access arguments' => array(ISLANDORA_VIEW_OBJECTS),
+	'file' => 'includes/callback.inc',
+	'type' => MENU_CALLBACK,
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function islandora_panorama_viewer_theme() {
+  return array(
+    'islandora_panorama_viewer' => array(
+      'file' => 'theme/theme.inc',
+      'template' => 'theme/islandora-panorama-viewer',
+      'variables' => array(
+        'object' => NULL,
+        'datastream_id' => 'JP2',
+        'page_progression' => 'rl',
+        'pages' => array(),
+      ),
+    ),
+    'islandora_panorama_viewer_panorama_info' => array(
+      'file' => 'theme/theme.inc',
+      'variables' => array(
+	'object' => NULL,
+	),
+    ),
+  );
+}
+
+/**
+ * Implements hook_islandora_viewer_info().
+ */
+function islandora_panorama_viewer_islandora_viewer_info() {
+  return array(
+    'islandora_panorama_viewer' => array(
+      'label' => t('PanoVR Panorama Viewer'),
+      'description' => t('PanoVR Panorama Viewer.'),
+      'configuration' => 'admin/islandora/islandora_viewers/panorama_viewer',
+      'callback' => 'islandora_panorama_viewer_viewer_callback',
+      'model' => array(
+        'islandora:panoramaCModel',
+      ),
+    ),
+  );
+}
+
+/**
+ * Callback function for the viewer.
+ *
+ * @param array $params
+ *   The params for the theme function 'islandora_panorama_viewer'.
+ *
+ * @return string
+ *   HTML repersentation of the PanoVR Panorama Viewer.
+ */
+function islandora_panorama_viewer_viewer_callback(array $params) {
+  return theme('islandora_panorama_viewer', $params);
+}

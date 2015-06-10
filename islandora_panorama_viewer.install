@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Defines the install/uninstall hooks for this module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function islandora_panorama_viewer_uninstall() {
+  $variables = array(
+    'islandora_panorama_viewer_djatoka_url',
+    'islandora_panorama_viewer_compression',
+    'islandora_panorama_viewer_ocr_field',
+    'islandora_panorama_viewer_ocr_filter_field',
+    'islandora_panorama_viewer_solr_result_count',
+    'islandora_panorama_viewer_sequence_number',
+    'islandora_panorama_viewer_overlay_opacity',
+    'islandora_panorama_viewer_default_page_view',
+  );
+  // Delete the Drupal variables defined by this module.
+  array_walk($variables, 'variable_del');
+}
